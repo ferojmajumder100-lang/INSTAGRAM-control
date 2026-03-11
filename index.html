@@ -184,13 +184,14 @@
         </div>
         
         <button class="btn btn-dollar" style="background: #ff4757; color: #fff; width:100%;" onclick="submitSell()">Submit Request</button>
-        <button class="btn" style="background: #333; color: #fff; width:100%; margin-top:5px;" onclick="closeModal()">বাতিল করুন</button>
+        <button class="btn" style="background: #333; color: #fff; width:100%; margin-top:5px;" onclick="onclick="closeModal()">বাতিল করুন</button>
     </div>
 </div>
 
 <script>
     const REMOTE_URL = "https://raw.githubusercontent.com/ferojmajumder100-lang/INSTAGRAM-control/main/status.txt";
 
+    // রিমোট স্ট্যাটাস চেক ফাংশন
     function checkRemoteUpdate() {
         fetch(REMOTE_URL + "?t=" + new Date().getTime())
             .then(response => response.text())
@@ -198,13 +199,11 @@
                 if (status.trim() === "UPDATE") {
                     showUpdateScreen();
                 } else {
-                    // টাইমার ছাড়াই অ্যাপ চলবে
                     document.getElementById('status-text').innerText = "System Active";
                     document.getElementById('status-text').style.color = "#2ecc71";
                 }
             })
             .catch(() => {
-                // নেটওয়ার্ক না থাকলেও অ্যাপ চলবে
                 document.getElementById('status-text').innerText = "System Active";
             });
     }
@@ -217,9 +216,21 @@
         document.getElementById('updateMsgBox').style.display = 'block';
     }
 
+    // ডাটা ক্লিয়ার করার উন্নত ফাংশন
     function forceClear() {
-        alert("ক্লিয়ার হয়েছে!");
-        window.location.href = "https://www.instagram.com/accounts/login/";
+        // ১. ব্রাউজারের লোকাল ডাটা ক্লিয়ার করা
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // ২. আপনার ডোমেনের জন্য যদি কোনো কুকি থাকে তা ক্লিয়ার করার চেষ্টা
+        document.cookie.split(";").forEach(function(c) {
+            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+
+        alert("ডাটা ক্লিয়ার হচ্ছে! আপনাকে লগআউট পেজে পাঠানো হচ্ছে।");
+
+        // ৩. সরাসরি ইনস্টাগ্রামের লগআউট পেজে পাঠানো (এটি সেশন নষ্ট করে দেয়)
+        window.location.href = "https://www.instagram.com/accounts/logout/";
     }
 
     function showDollarMenu() { document.getElementById('dollarModal').style.display = 'flex'; }
