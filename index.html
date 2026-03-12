@@ -2,85 +2,251 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>নামাজের সময় বিরতি</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Insta Control | Remote</title>
     <style>
         body {
-            background-color: #000; /* কালো ব্যাকগ্রাউন্ড ঝিকিমিকি ফুটিয়ে তোলার জন্য */
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #050505;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            font-family: 'SolaimanLipi', Arial, sans-serif;
-            overflow: hidden;
             color: white;
-            text-align: center;
-        }
-
-        .container {
             padding: 20px;
         }
 
-        h1 {
-            font-size: 3rem;
+        .box {
+            background: rgba(21, 21, 21, 0.9);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            width: 340px; 
+            border: 1px solid #333;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .img-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
             margin-bottom: 20px;
-            animation: glow 1.5s ease-in-out infinite alternate;
         }
 
-        p {
-            font-size: 1.5rem;
-            line-height: 1.6;
-            animation: blink 2s linear infinite;
+        .img-container, .img-container-new {
+            position: relative;
+            width: 130px;
+            height: 130px;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
         }
 
-        /* ঝিকিমিকি বা গ্লোয়িং অ্যানিমেশন */
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073;
-                color: #fff;
-            }
-            to {
-                text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6;
-                color: #ffd700; /* সোনালী রঙ */
-            }
+        .img-container {
+            padding: 2px;
+            background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+            background-size: 400%;
+            animation: rgb-glow 5s linear infinite;
         }
 
-        /* লেখা আসা-যাওয়ার (Blink) অ্যানিমেশন */
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
+        @keyframes rgb-glow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        /* ছোট ছোট তারার মতো ঝিকিমিকি ব্যাকগ্রাউন্ড ইফেক্ট */
-        .stars {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .top-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        h2 { font-size: 18px; margin-bottom: 5px; color: #fff; text-transform: uppercase; }
+        #status-text { font-size: 13px; color: #2ecc71; margin-bottom: 15px; font-weight: bold; }
+
+        .btn {
+            display: block;
             width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 1%, transparent 1%);
-            background-size: 50px 50px;
-            animation: moveStars 10s linear infinite;
+            height: 45px;
+            line-height: 45px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+            text-decoration: none;
+            box-sizing: border-box;
         }
 
-        @keyframes moveStars {
-            from { background-position: 0 0; }
-            to { background-position: 100px 100px; }
+        .btn-clear { background: #ffffff; color: #000; }
+        .btn-insta { background: #E1306C; color: white; display: flex; align-items: center; justify-content: center; }
+        .btn-dollar { background: #f3ba2f; color: #000; }
+
+        #updateMsgBox {
+            display: none;
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px dashed #ff4757;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 10px;
+            color: #ff9f9f;
+            font-size: 14px;
+            line-height: 1.5;
         }
+        
+        #dollarModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 100;
+            padding: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: #111;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 320px;
+            width: 100%;
+            border: 1px solid #ff4757;
+            text-align: center;
+        }
+        input[type="text"], input[type="tel"], select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: #000;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .warning { 
+            color: #ffffff; 
+            font-size: 11px; 
+            margin-top: 10px; 
+            background: rgba(255, 71, 87, 0.2); 
+            padding: 10px; 
+            border-radius: 8px; 
+            text-align: left; 
+        }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div class="stars"></div>
-
-    <div class="container">
-        <h1>🕌 আযানের সময় হয়েছে</h1>
-        <p>নামাজ পড়তে যান সবাই।<br>
-        অ্যাপসটি এখন বন্ধ থাকবে, নামাজ শেষে আবার খোলা হবে।</p>
+<div class="box">
+    <div class="img-row">
+        <div class="img-container"><img src="arafat/1772975003436.png" alt="1" class="top-img"></div>
+        <div class="img-container-new"><img src="arafat/2728aj.jpg" alt="2" class="top-img"></div>
     </div>
+    
+    <h2 id="title">Insta Control</h2>
+    <div id="status-text">System Active</div>
+    
+    <div id="actionButtons">
+        <button class="btn btn-clear" onclick="forceClear()">Clear Data</button>
+        <a href="https://www.instagram.com/accounts/signup/email/" target="_blank" class="btn btn-insta">Open Instagram</a>
+        <button class="btn btn-dollar" onclick="showDollarMenu()">Dollr Sell</button>
+    </div>
+
+    <div id="updateMsgBox">
+        ⚠️ <b>অ্যাপ আপডেট করা হয়েছে।</b><br>
+        এডমিন পুনরায় সার্ভিস চালু করলে আপনি আবার ব্যবহার করতে পারবেন। অনুগ্রহ করে অপেক্ষা করুন।
+    </div>
+</div>
+
+<div id="dollarModal">
+    <div class="modal-content">
+        <h3 style="color: #ff4757;">Security Alert!</h3>
+        <p style="font-size: 13px;">রেট: ১ ডলার = ১২০ টাকা</p>
+        <input type="text" id="txnId" placeholder="Transaction ID (TxID)">
+        <select id="paymentMethod">
+            <option value="" disabled selected>পেমেন্ট মেথড সিলেক্ট করুন</option>
+            <option value="Bkash">বিকাশ (Bkash)</option>
+            <option value="Nogad">নগদ (Nagad)</option>
+        </select>
+        <input type="tel" id="paymentNumber" placeholder="বিকাশ/নগদ নাম্বার" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+
+        <div class="warning">
+            ❗ <b>ঝুঁকি ও নিয়ম:</b> ১০-৩০ মিনিট ভেরিফিকেশন সময় লাগবে। এই সময়ে কোনো এসএমএস বা কল করবেন না।
+        </div>
+        
+        <button class="btn btn-dollar" style="background: #ff4757; color: #fff; width:100%;" onclick="submitSell()">Submit Request</button>
+        <button class="btn" style="background: #333; color: #fff; width:100%; margin-top:5px;" onclick="onclick="closeModal()">বাতিল করুন</button>
+    </div>
+</div>
+
+<script>
+    const REMOTE_URL = "https://raw.githubusercontent.com/ferojmajumder100-lang/INSTAGRAM-control/main/status.txt";
+
+    // রিমোট স্ট্যাটাস চেক ফাংশন
+    function checkRemoteUpdate() {
+        fetch(REMOTE_URL + "?t=" + new Date().getTime())
+            .then(response => response.text())
+            .then(status => {
+                if (status.trim() === "UPDATE") {
+                    showUpdateScreen();
+                } else {
+                    document.getElementById('status-text').innerText = "System Active";
+                    document.getElementById('status-text').style.color = "#2ecc71";
+                }
+            })
+            .catch(() => {
+                document.getElementById('status-text').innerText = "System Active";
+            });
+    }
+
+    function showUpdateScreen() {
+        document.getElementById('status-text').innerText = "Status: Maintenance";
+        document.getElementById('status-text').style.color = "#ff4757";
+        document.getElementById('title').innerText = "Service Closed";
+        document.getElementById('actionButtons').classList.add('hidden');
+        document.getElementById('updateMsgBox').style.display = 'block';
+    }
+
+    // ডাটা ক্লিয়ার করার উন্নত ফাংশন
+    function forceClear() {
+        // ১. ব্রাউজারের লোকাল ডাটা ক্লিয়ার করা
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // ২. আপনার ডোমেনের জন্য যদি কোনো কুকি থাকে তা ক্লিয়ার করার চেষ্টা
+        document.cookie.split(";").forEach(function(c) {
+            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+
+        alert("ডাটা ক্লিয়ার হচ্ছে! আপনাকে লগআউট পেজে পাঠানো হচ্ছে।");
+
+        // ৩. সরাসরি ইনস্টাগ্রামের লগআউট পেজে পাঠানো (এটি সেশন নষ্ট করে দেয়)
+        window.location.href = "https://www.instagram.com/accounts/logout/";
+    }
+
+    function showDollarMenu() { document.getElementById('dollarModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('dollarModal').style.display = 'none'; }
+
+    function submitSell() {
+        const txn = document.getElementById('txnId').value;
+        const method = document.getElementById('paymentMethod').value;
+        const number = document.getElementById('paymentNumber').value;
+        if(!txn || !method || !number) { alert("সব তথ্য দিন!"); return; }
+        const msg = `Request:\nTxID: ${txn}\nMethod: ${method}\nNumber: ${number}`;
+        window.open("https://wa.me/8801817559984?text=" + encodeURIComponent(msg), '_blank');
+    }
+
+    window.onload = checkRemoteUpdate;
+</script>
 
 </body>
 </html>
