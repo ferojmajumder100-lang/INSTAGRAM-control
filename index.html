@@ -88,7 +88,6 @@
         }
 
         .btn-clear { background: #ffffff; color: #000; }
-        .btn-insta { background: #E1306C; color: white; display: flex; align-items: center; justify-content: center; }
         .btn-dollar { background: #f3ba2f; color: #000; }
 
         #updateMsgBox {
@@ -157,7 +156,6 @@
     
     <div id="actionButtons">
         <button class="btn btn-clear" onclick="forceClear()">Clear Data</button>
-        <a href="https://www.instagram.com/accounts/signup/email/" target="_blank" class="btn btn-insta">Open Instagram</a>
         <button class="btn btn-dollar" onclick="showDollarMenu()">Dollr Sell</button>
     </div>
 
@@ -184,14 +182,13 @@
         </div>
         
         <button class="btn btn-dollar" style="background: #ff4757; color: #fff; width:100%;" onclick="submitSell()">Submit Request</button>
-        <button class="btn" style="background: #333; color: #fff; width:100%; margin-top:5px;" onclick="onclick="closeModal()">বাতিল করুন</button>
+        <button class="btn" style="background: #333; color: #fff; width:100%; margin-top:5px;" onclick="closeModal()">বাতিল করুন</button>
     </div>
 </div>
 
 <script>
     const REMOTE_URL = "https://raw.githubusercontent.com/ferojmajumder100-lang/INSTAGRAM-control/main/status.txt";
 
-    // রিমোট স্ট্যাটাস চেক ফাংশন
     function checkRemoteUpdate() {
         fetch(REMOTE_URL + "?t=" + new Date().getTime())
             .then(response => response.text())
@@ -216,20 +213,15 @@
         document.getElementById('updateMsgBox').style.display = 'block';
     }
 
-    // ডাটা ক্লিয়ার করার উন্নত ফাংশন
     function forceClear() {
-        // ১. ব্রাউজারের লোকাল ডাটা ক্লিয়ার করা
         localStorage.clear();
         sessionStorage.clear();
         
-        // ২. আপনার ডোমেনের জন্য যদি কোনো কুকি থাকে তা ক্লিয়ার করার চেষ্টা
         document.cookie.split(";").forEach(function(c) {
             document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
         });
 
         alert("ডাটা ক্লিয়ার হচ্ছে! আপনাকে লগআউট পেজে পাঠানো হচ্ছে।");
-
-        // ৩. সরাসরি ইনস্টাগ্রামের লগআউট পেজে পাঠানো (এটি সেশন নষ্ট করে দেয়)
         window.location.href = "https://www.instagram.com/accounts/logout/";
     }
 
